@@ -36,8 +36,12 @@ async function run() {
 
         app.post("/add-a-service", async (req, res) => {
             const serviceData = req.body
-            console.log(serviceData);
             const result = servicesCollection.insertOne(serviceData)
+            res.send(result)
+        })
+
+        app.get("/all-services", async (req, res) => {
+            const result = await servicesCollection.find().toArray()
             res.send(result)
         })
 
