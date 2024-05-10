@@ -31,6 +31,16 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect()
 
+        const servicesCollection = client.db("serviceFlowDB").collection("services")
+        const bookingsCollection = client.db("serviceFlowDB").collection("bookings")
+
+        app.post("/add-a-service", async (req, res) => {
+            const serviceData = req.body
+            console.log(serviceData);
+            const result = servicesCollection.insertOne(serviceData)
+            res.send(result)
+        })
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 })
         console.log("Pinged your deployment. You successfully connected to MongoDB!")
