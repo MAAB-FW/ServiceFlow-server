@@ -55,6 +55,13 @@ async function run() {
             res.send(result)
         })
 
+        app.delete("/delete-service/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await servicesCollection.deleteOne(query)
+            res.send(result)
+        })
+
         app.post("/all-bookings", async (req, res) => {
             const bookedData = req.body
             const result = await bookingsCollection.insertOne(bookedData)
