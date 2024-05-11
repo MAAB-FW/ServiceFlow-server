@@ -41,7 +41,10 @@ async function run() {
         })
 
         app.get("/all-services", async (req, res) => {
-            const result = await servicesCollection.find().toArray()
+            const userEmail = req.query.email
+            let query = {}
+            if (userEmail) query = { providerEmail: userEmail }
+            const result = await servicesCollection.find(query).toArray()
             res.send(result)
         })
 
