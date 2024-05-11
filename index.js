@@ -55,6 +55,17 @@ async function run() {
             res.send(result)
         })
 
+        app.patch("/update-service/:id", async (req, res) => {
+            const id = req.params.id
+            const updateService = req.body
+            const filter = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set: { ...updateService },
+            }
+            const result = await servicesCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        })
+
         app.delete("/delete-service/:id", async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
