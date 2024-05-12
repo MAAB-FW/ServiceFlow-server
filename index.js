@@ -42,7 +42,9 @@ async function run() {
 
         app.get("/all-services", async (req, res) => {
             const userEmail = req.query.email
-            let query = {}
+            const search = req.query.search
+            let query = { serviceName: { $regex: search, $options: "i" } }
+            if (!search) query = {}
             if (userEmail) query = { providerEmail: userEmail }
             const result = await servicesCollection.find(query).toArray()
             res.send(result)
