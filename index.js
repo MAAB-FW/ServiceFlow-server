@@ -118,10 +118,12 @@ async function run() {
             res.send(result)
         })
 
-        app.get("/all-bookings", async (req, res) => {
+        app.get("/all-bookings", verifyToken, async (req, res) => {
             const userEmail = req.query.email
-            let query = {}
-            if (userEmail) query = { userEmail: userEmail }
+            if (userEmail !== req.user.userEmail) {
+                return res.status(403).send({ message: "Forbidden access!" })
+            }
+            const query = { userEmail: userEmail }
             const result = await bookingsCollection.find(query).toArray()
             res.send(result)
         })
