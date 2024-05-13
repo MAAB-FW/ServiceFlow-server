@@ -32,9 +32,9 @@ const client = new MongoClient(uri, {
 
 const verifyToken = (req, res, next) => {
     const token = req.cookies?.token
-    if (!token) return res.status(401).send({ message: "Unauthorized access" })
+    if (!token) return res.status(401).send({ message: "Unauthorized access!" })
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-        if (err) return res.status(401).send({ message: "Unauthorized access" })
+        if (err) return res.status(401).send({ message: "Unauthorized access!" })
         req.user = decoded
         next()
     })
@@ -78,6 +78,16 @@ async function run() {
             const search = req.query.search
             let query = { serviceName: { $regex: search, $options: "i" } }
             if (!search) query = {}
+            const result = await servicesCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        app.get("/manage-services", verifyToken, async (req, res) => {
+            const userEmail = req.query.email
+            if (userEmail !== req.user.userEmail) {
+                return res.status(403).send({ message: "Forbidden access!" })
+            }
+            let query = {}
             if (userEmail) query = { providerEmail: userEmail }
             const result = await servicesCollection.find(query).toArray()
             res.send(result)
