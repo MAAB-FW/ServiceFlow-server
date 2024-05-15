@@ -74,12 +74,22 @@ async function run() {
         })
 
         app.get("/all-services", async (req, res) => {
-            const userEmail = req.query.email
             const search = req.query.search
+            const page = parseInt(req.query.page)
+            const size = parseInt(req.query.size)
             let query = { serviceName: { $regex: search, $options: "i" } }
             if (!search) query = {}
-            const result = await servicesCollection.find(query).toArray()
+            const result = await servicesCollection
+                .find(query)
+                .skip(size * page)
+                .limit(size)
+                .toArray()
             res.send(result)
+        })
+
+        app.get("/pagination-services", async (req, res) => {
+            const count = await servicesCollection.countDocuments()
+            res.send({ count })
         })
 
         app.get("/manage-services", verifyToken, async (req, res) => {
